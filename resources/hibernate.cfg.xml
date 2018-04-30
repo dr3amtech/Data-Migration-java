@@ -5,12 +5,12 @@
 <hibernate-configuration>
 	<session-factory>
 		<property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
-		<!-- <property name="hibernate.connection.password">letM3In</property>
-		<property name="hibernate.connection.url">jdbc:oracle:thin:@modaengdv01q.mod.agcocorp.com:1521/qwketl.mod.agcocorp.com</property>
-		  <property name="hibernate.connection.username">rainbow</property> -->
-	 	<property name="hibernate.connection.password">rainG0away </property>
-		<property name="hibernate.connection.url">jdbc:oracle:thin:@modaengdv03q.mod.agcocorp.com:1522/qwketl</property>
-		<property name="hibernate.connection.username">josephjo</property>  
+		<!-- <property name="hibernate.connection.password"></property>
+		<property name="hibernate.connection.url"></property>
+		  <property name="hibernate.connection.username"></property> -->
+	 	<property name="hibernate.connection.password"></property>
+		<property name="hibernate.connection.url"></property>
+		<property name="hibernate.connection.username"></property>  
 		<property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
 		<!--<property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property> -->
 		<property name="hibernate.hbm2ddl.auto">update</property>
