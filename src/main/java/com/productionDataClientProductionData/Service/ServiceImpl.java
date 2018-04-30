@@ -131,7 +131,7 @@ public class ServiceImpl implements Service {
 		Client client = ClientBuilder.newClient(clientConfig);
 		// Authenticate Access
 		HttpAuthenticationFeature access = HttpAuthenticationFeature.basicBuilder()
-				.credentials("almsupportdesk@fuseserviceaccount.com", "ALM2017!").build();
+				.credentials("").build();
 		// Define and build URI for WebTarget
 		WebTarget webTarget = client.target(UriBuilder.fromUri("http://agco-fuse-trackers.herokuapp.com").build());
 		// verify access permission
@@ -1077,9 +1077,9 @@ public class ServiceImpl implements Service {
 		// Object key
 		CredentialsProvider provider = new BasicCredentialsProvider();
 		// UsernamePasswordCredentials credintaials =new
-		// UsernamePasswordCredentials("ADMTHREE.AC2OA@gmail.com","password1234");
+		// UsernamePasswordCredentials("","");
 		UsernamePasswordCredentials credintaials = new UsernamePasswordCredentials(
-				"almsupportdesk@fuseserviceaccount.com", "ALM2017!");
+				"", "!");
 		provider.setCredentials(AuthScope.ANY, credintaials);
 		HttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
 		Object thisi3 = null;
@@ -1552,7 +1552,7 @@ return statusTracker;
 		// Object key
 		CredentialsProvider provider = new BasicCredentialsProvider();
 		// UsernamePasswordCredentials credintaials =new
-		// UsernamePasswordCredentials("ADMTHREE.AC2OA@gmail.com","password1234");
+		// UsernamePasswordCredentials("","");
 		UsernamePasswordCredentials credintaials = new UsernamePasswordCredentials(
 				"almsupportdesk@fuseserviceaccount.com", "ALM2017!");
 		provider.setCredentials(AuthScope.ANY, credintaials);
@@ -1820,7 +1820,7 @@ return statusTracker;
 
 		String relayHost = "smtpapps.atlanta.agcocorp.com";
 		Date date = new Date();
-		String email = "joshua.joseph@agcocorp.com";
+		String email = "";
 		String subject = "Data Tracker Application";
 
 		body = body + "Date: " + date;
