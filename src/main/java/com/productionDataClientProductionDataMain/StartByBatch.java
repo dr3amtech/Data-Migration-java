@@ -7,31 +7,46 @@ import com.productionDataClientProductionData.Service.ServiceImpl;
 import com.productionDataClientProductionData.impl.Service;
 
 public class StartByBatch {
-	private static int statusTracker = 0;
+	
+	//Declare GLobal Variable
+	private static int statusTracker;
+	
+	//Declaring Logging File
 	static Logger logger = LogManager
 			.getLogger(com.productionDataClientProductionDataMain.StartByBatch.class.getName());
-	// static Service serviceI = new ServiceImpl();
+	
+	
 	public static void main(String[] args) {
-		int statusTracker =0;
+		//Service class to handle action between service and database
 		Service serviceI = new ServiceImpl();
-//		// process data
-//		int[] storage = {0,1000,2000};
-//		for(int x =0;x<storage.length;x++){
-//		serviceI.DataCollection(storage[x]);
-//		}
+		
+		//Track Migration time
 		long startTime = System.currentTimeMillis();
+		
+		//LOGGER
 		logger.debug("Starting to Read Files");
+		
+		//fileReader Method returning how many objects have been inserted into the database
 		statusTracker = statusTracker+serviceI.fileReader(statusTracker);
 		
+		//End Time
 		long endTime   = System.currentTimeMillis();
+		
+		
+		//Total Time
 		long totalTime = endTime - startTime;
+		
+		//total time in mins 
 		totalTime = totalTime/60000;
 		
+		
+		//email notification
 		serviceI.sendMail("Data Migration has Ended -\nNumber of updated Items: "+statusTracker+"\nProcess Time(MIN) : "+totalTime+"\n");
+		
+		
+		//logger
 		logger.info("-------PRODUCTION DATA COLLECTION COMPLETED-------");
 	}
-	// Service serviceStart = new ServiceImpl();
-	// serviceStart.getApiCalls();
-	// log complete if complete
+	
 
 }
