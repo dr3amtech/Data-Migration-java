@@ -71,7 +71,10 @@ public class ServiceImpl implements Service {
 			.getLogger(com.productionDataClientProductionData.Service.ServiceImpl.class.getName());
 
 	private static SessionDAO sessionSendToDB = new SessionDaoImpl();
-	private final String packName = "com.productionDataClientProductionData.pojo.";
+	private final String PACKNAME = "com.productionDataClientProductionData.pojo.";
+	private final String USERNAME = "almsupportdesk@fuseserviceaccount.com";
+	private static String[] entities= new String[]{"Equipment","Trackers"};
+	private final String URIP = "URI";
 	private static Map<Integer, Object> documentList2 = new TreeMap<Integer, Object>();
 	private static Map<Integer, Object> documentList3 = new TreeMap<Integer, Object>();
 	private static List<String> vollist = new ArrayList<String>();
@@ -79,46 +82,64 @@ public class ServiceImpl implements Service {
 	private static boolean doNotAdd = true;
 	private static int v = 0;
 	private static InputStream input = loader.getResourceAsStream("APIs.properties");
+	public static Map<String, String> propertiesMap = new HashMap<String,String>();
 	private static Object tempObject = null;
 	private static List<Object> tempList = new ArrayList<Object>();
 	private static boolean split = true;
 	public static int offSet=0;
 
+//	@Override
+//	public Map<String, String> getApiCalls() {
+//		StringBuilder sb = new StringBuilder();
+//		sendMail("Data Migration has begun -\n ");
+//		Map<String, String> propertiesMap = new LinkedHashMap<String, String>();
+//		BufferedReader bf = new BufferedReader(new InputStreamReader(input));
+//		try {
+//			// returns back 0-65535 or -1 end of line cast into a character, 0 being space
+//			for (int c; (c = bf.read()) != -1;) {
+//				if (c != 0) {
+//					sb.append((char) c);
+//				}
+//			}
+//		} catch (IOException e) {
+//			logger.error(e);
+//		} catch (NullPointerException n) {
+//			logger.error(n);
+//		}
+//		// split up properties files
+//		String[] places = sb.toString().split("\\r\\n");
+//		// loop through properties files slplits in order to have key and values used
+//		// for pojo and api call
+//		for (int x = 0; x < places.length; x++) {
+//			String[] temp = places[x].split("=");
+//			try {
+//				propertiesMap.put(temp[0], temp[1]);
+//				// }
+//			} catch (IndexOutOfBoundsException i) {
+//				logger.error(i);
+//				// i.printStackTrace();
+//			}
+//		}
+//		return propertiesMap;
+//	}
 	@Override
-	public Map<String, String> getApiCalls() {
-		StringBuilder sb = new StringBuilder();
-		sendMail("Data Migration has begun -\n ");
-		Map<String, String> propertiesMap = new LinkedHashMap<String, String>();
-		BufferedReader bf = new BufferedReader(new InputStreamReader(input));
-		try {
-			// returns back 0-65535 or -1 end of line cast into a character, 0 being space
-			for (int c; (c = bf.read()) != -1;) {
-				if (c != 0) {
-					sb.append((char) c);
-				}
-			}
-		} catch (IOException e) {
-			logger.error(e);
-		} catch (NullPointerException n) {
-			logger.error(n);
+	public HashMap<String, String> getApiCalls() {
+	try {
+		FileInputStream fis =  new FileInputStream("<File location containing properties ex. Credentials>");
+		
+		
+		Properties prop = new Properties(System.getProperties());
+		prop.load(fis);
+		System.setProperties(prop);
+		for(int i =0;i<entities.length;i++) {
+			propertiesMap.put(entities[i], System.getProperty(entities[i]));
 		}
-		// split up properties files
-		String[] places = sb.toString().split("\\r\\n");
-		// loop through properties files slplits in order to have key and values used
-		// for pojo and api call
-		for (int x = 0; x < places.length; x++) {
-			String[] temp = places[x].split("=");
-			try {
-				propertiesMap.put(temp[0], temp[1]);
-				// }
-			} catch (IndexOutOfBoundsException i) {
-				logger.error(i);
-				// i.printStackTrace();
-			}
-		}
-		return propertiesMap;
+		
+	}catch(IOException ex) {
+		ex.printStackTrace();
 	}
-
+		return (HashMap<String,String>) propertiesMap;
+	}
 	@Override
 	public void getJSonObject() {
 
@@ -131,7 +152,7 @@ public class ServiceImpl implements Service {
 		Client client = ClientBuilder.newClient(clientConfig);
 		// Authenticate Access
 		HttpAuthenticationFeature access = HttpAuthenticationFeature.basicBuilder()
-				.credentials("").build();
+				.credentials(USERNAME, System.getProperty(USERNAME)).build();
 		// Define and build URI for WebTarget
 		WebTarget webTarget = client.target(UriBuilder.fromUri("http://agco-fuse-trackers.herokuapp.com").build());
 		// verify access permission
@@ -148,8 +169,8 @@ public class ServiceImpl implements Service {
 			Class<?> cl;
 			try {
 				// reflect on the given class
-				// cl = Class.forName(packName.trim()+property.getKey().toString().trim());
-				cl = Class.forName(packName.trim() + property.getKey().toString().trim());
+				// cl = Class.forName(PACKNAME.trim()+property.getKey().toString().trim());
+				cl = Class.forName(PACKNAME.trim() + property.getKey().toString().trim());
 
 				// API call/Query Application/json Get Request(deserialize JSON content)
 				// for(int c =0; c<3;c++) {
@@ -183,24 +204,7 @@ public class ServiceImpl implements Service {
 		// return tempObject;
 	}
 
-	// @Override
-	// public void run() {
-	// try {
-	// while(completed) {
-	// logger.info("Thread = "+Thread.currentThread().getId());
-	// System.out.println("Thread = "+Thread.currentThread().getId());
-	// DataCollection();
-	// completed = false;
-	// }
-	// }catch(Exception e){
-	// //System.out.println("caught it");
-	// }
-	//
-	// }
-	// @Override
-	// public void storeData() {
-	// getJSonObject();
-	// }
+
 	@Override
 	public void DataCollection(int offSet) {
 		ServiceImpl.offSet =offSet;
@@ -397,14 +401,7 @@ public class ServiceImpl implements Service {
 
 					}
 
-					// for(Entry<String,Object> entry77: newMap.entrySet()){
-					// try {
-					// // System.out.println("Key:"+entry77.getKey()+"-
-					// Value:"+entry77.getValue().toString());
-					// }catch(NullPointerException n) {
-					// System.out.println("Not an issue");
-					// }
-					// }
+				
 
 					// runtime instance
 					Object thisi = null;
@@ -420,11 +417,6 @@ public class ServiceImpl implements Service {
 						logger.error(e);
 					}
 
-					// for(Entry<String,Object> entryMap2 : newMap.entrySet()) {
-					// System.out.println(entryMap2.getKey());
-					// System.out.println(entryMap2.getValue());
-					// }
-
 					if (linkTrackerSetter.isEmpty() && finalCorpMap.isEmpty()) {
 						xt++;
 						mapListONE.add((LinkedHashMap) newMap);
@@ -439,50 +431,19 @@ public class ServiceImpl implements Service {
 					}
 				}
 			}
-			// try {
-			// thisObject.equals(null);
-			// test.add(thisObject);
-			// documentList2.put(v,test.get(index));
-			// v++;
-			// index++;
-			// }catch(NullPointerException e) {
-			// //logger.info("Bad data");
-			// }
-
-			// 240
-			// if(v>249) {
-			// //Joshua
-			// //sessionSendToDB.setObject(tempObject.getClass().getSimpleName(),documentList1);
-			// documentList3 = sessionSendToDB.checkForUpdate(documentList2);
-			// sessionSendToDB.setObject(tempObject.getClass().getSimpleName(),documentList3);
-			// test.clear();
-			// documentList2.clear();
-			// documentList3.clear();
-			// v=0;
-			// //index=0;
-			// }
+		
+		
 
 		}
-		//
-		// }
-		// }
-
-		// }
-		// documentList3 = sessionSendToDB.checkForUpdate(documentList2);
-		// sessionSendToDB.setObject(tempObject.getClass().getSimpleName(),documentList2);
-		// //notify();
-		// sessionSendToDB.closeSession();
-
+	
 	}
 
 	@Override
 	public Object trackerCollection(Object key) {
 		// Object key
 		CredentialsProvider provider = new BasicCredentialsProvider();
-		// UsernamePasswordCredentials credintaials =new
-		// UsernamePasswordCredentials("ADMTHREE.AC2OA@gmail.com","password1234");
 		UsernamePasswordCredentials credintaials = new UsernamePasswordCredentials(
-				"almsupportdesk@fuseserviceaccount.com", "ALM2017!");
+				USERNAME, System.getProperty(USERNAME));
 		provider.setCredentials(AuthScope.ANY, credintaials);
 		HttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
 		Object thisi3 = null;
@@ -510,7 +471,7 @@ public class ServiceImpl implements Service {
 
 		Class<?> cl2 = null;
 		try {
-			cl2 = Class.forName(packName + Trackers.class.getSimpleName());
+			cl2 = Class.forName(PACKNAME + Trackers.class.getSimpleName());
 			thisi3 = cl2.newInstance();
 		} catch (ClassNotFoundException e2) {
 			// logger.error(e2);
@@ -543,9 +504,6 @@ public class ServiceImpl implements Service {
 				throw new RuntimeException("Failed  http Error Code: " + response.getStatusLine().getStatusCode());
 
 			}
-			// Object one =JSONValue.parse(response.getEntity().toString());
-			// try {
-			// JSONValue.parseWithException(bf);
 			String output;
 			while ((output = bf.readLine()) != null) {
 				// System.out.println(output);
@@ -556,10 +514,6 @@ public class ServiceImpl implements Service {
 
 			try {
 				jsonO = new JSONParser().parse(sb.toString());
-				// LinkedHashMap<Object,Object> thisi= new LinkedHashMap<Object,Object>()jsonO);
-				// System.out.println(jsonO);
-				// (HashMap<?, ?>) jsonO)getClass().getClass().getde
-				// Object myObjects = mapper.readValue(output, String.class);
 
 				for (Entry<?, ?> entry : ((HashMap<?, ?>) jsonO).entrySet()) {
 					try {
@@ -607,11 +561,10 @@ public class ServiceImpl implements Service {
 					} catch (ClassCastException cee) {
 						for (Entry<?, ?> entry3 : ((HashMap<?, ?>) entry.getValue()).entrySet()) {
 							// System.out.println(entry3.getKey()+" = "+entry3.getValue());
-							// linked.put(entry3.getKey().toString().trim(), entry3.getValue());
 
 							JSONArray array = (JSONArray) entry3.getValue();
 							try {
-								cl2 = Class.forName(packName + entry3.getKey().toString().substring(0, 1).toUpperCase()
+								cl2 = Class.forName(PACKNAME + entry3.getKey().toString().substring(0, 1).toUpperCase()
 										+ entry3.getKey().toString().substring(1));
 								thisi3 = cl2.newInstance();
 							} catch (ClassNotFoundException e1) {
@@ -624,7 +577,7 @@ public class ServiceImpl implements Service {
 							for (int c = 0; c < array.size(); c++) {
 								try {
 									cl2 = Class
-											.forName(packName + entry3.getKey().toString().substring(0, 1).toUpperCase()
+											.forName(PACKNAME + entry3.getKey().toString().substring(0, 1).toUpperCase()
 													+ entry3.getKey().toString().substring(1));
 									thisi3 = cl2.newInstance();
 								} catch (ClassNotFoundException e1) {
@@ -706,7 +659,7 @@ public class ServiceImpl implements Service {
 							for (int h = 0; h < newList.size(); h++) {
 
 								try {
-									cl2 = Class.forName(packName + "CanVariables");
+									cl2 = Class.forName(PACKNAME + "CanVariables");
 									thisi3 = cl2.newInstance();
 
 									mI3 = cl2.getDeclaredMethod("setStandardUnits",
@@ -739,7 +692,7 @@ public class ServiceImpl implements Service {
 						for (Entry<?, ?> entry5 : linked.entrySet()) {
 							try {
 
-								cl2 = Class.forName(packName + entry5.getValue().getClass().getSimpleName());
+								cl2 = Class.forName(PACKNAME + entry5.getValue().getClass().getSimpleName());
 								thisi3 = entry5.getValue();
 							} catch (ClassNotFoundException e1) {
 								// logger.error(e1);
@@ -785,23 +738,7 @@ public class ServiceImpl implements Service {
 			logger.error(e1);
 		}
 
-		// try {
-		// linked.get("Configurations").equals(null);
-		// linked.get("Equipment").equals(null);
-		// linked.get("Dealers").equals(null);
-		// linked.get("Owners").equals(null);
-		// if(!isItTrue) {
-		// documentList2.put(v,linked.get("Trackers"));
-		// v++;
-		// }else {
-		// doNotAdd = false;
-		// linked.clear();
-		// return null;
-		// }
-		// }catch(NullPointerException e) {
-		// doNotAdd = false;
-		// logger.info("No Such Equipment Exist (Trackers)");
-		// }
+		
 
 		documentList2.put(v, linked.get("Trackers"));
 		v++;
@@ -812,13 +749,7 @@ public class ServiceImpl implements Service {
 	@Override
 	public Object subDataCollection(Map<String, Object> newMap, Object thisi, Class<?> cl) {
 		doNotAdd = true;
-		// try {
-		// newMap.get("duty").equals(null);
-		// newMap.get("equipment").equals(null);
-		// newMap.get("canVariables").equals(null);
-		// }catch(NullPointerException n) {
-		// return null;
-		// }
+		
 		Method mI = null;
 		for (Entry<String, Object> entry2 : newMap.entrySet()) {
 
@@ -836,10 +767,6 @@ public class ServiceImpl implements Service {
 
 					// get tracker
 					Object tempObjectE = trackerCollection(entryEquipment.getValue().toString());
-					// Object tempObjecte = httpTest(MadeData.get(index));
-
-					// Object tempObjectE =
-					// equipmentCollection(entryEquipment.getValue().toString());
 
 					try {
 						tempObjectE.equals(null);
@@ -850,12 +777,9 @@ public class ServiceImpl implements Service {
 
 					try {
 
-						// tempObject = test1.getObject("ffad8624-3ecf-4b5c-a03a-fb5e135e227a",
-						// "Equipment", "latestTelemetries");
-
 						mI = cl.getDeclaredMethod(vol, tempObjectE.getClass());
 						// use entry value in order to invoke the return type at runtime
-
+						
 						// Object thisi2 =cl2.newInstance();
 						try {
 							mI.invoke(thisi, tempObjectE);
@@ -878,7 +802,7 @@ public class ServiceImpl implements Service {
 			} else if (entry2.getKey().toString().equals("canVariables")) {
 				Class<?> cl2 = null;
 				try {
-					cl2 = Class.forName(packName + CanVariablesL.class.getSimpleName());
+					cl2 = Class.forName(PACKNAME + CanVariablesL.class.getSimpleName());
 				} catch (ClassNotFoundException e) {
 					// logger.error(e);
 				}
@@ -913,8 +837,7 @@ public class ServiceImpl implements Service {
 						logger.error(e1);
 					}
 					for (Entry<?, ?> entryCan2 : ((LinkedHashMap<?, ?>) entryCan.getValue()).entrySet()) {
-						// for(Entry<?,?> entryCan3 :((LinkedHashMap<?,?>)
-						// entryCan2.getValue()).entrySet()) {
+						
 						String vol3 = "set" + entryCan2.getKey().toString().substring(0, 1).toUpperCase()
 								+ entryCan2.getKey().toString().substring(1);
 
@@ -968,7 +891,7 @@ public class ServiceImpl implements Service {
 				Class<?> cl3 = null;
 				Object thisi3 = null;
 				try {
-					cl3 = Class.forName(packName + Duties.class.getSimpleName());
+					cl3 = Class.forName(PACKNAME + Duties.class.getSimpleName());
 
 					thisi3 = cl3.newInstance();
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e1) {
@@ -1065,10 +988,6 @@ public class ServiceImpl implements Service {
 			}
 		}
 
-		// if(!doNotAdd) {
-		// return null;
-		// }
-
 		return thisi;
 	}
 
@@ -1076,10 +995,8 @@ public class ServiceImpl implements Service {
 	public Object equipmentCollection(Object key) {
 		// Object key
 		CredentialsProvider provider = new BasicCredentialsProvider();
-		// UsernamePasswordCredentials credintaials =new
-		// UsernamePasswordCredentials("","");
 		UsernamePasswordCredentials credintaials = new UsernamePasswordCredentials(
-				"", "!");
+				USERNAME, System.getProperty(USERNAME));
 		provider.setCredentials(AuthScope.ANY, credintaials);
 		HttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
 		Object thisi3 = null;
@@ -1103,7 +1020,7 @@ public class ServiceImpl implements Service {
 
 		Class<?> cl2 = null;
 		try {
-			cl2 = Class.forName(packName + Equipment.class.getSimpleName());
+			cl2 = Class.forName(PACKNAME + Equipment.class.getSimpleName());
 			thisi3 = cl2.newInstance();
 		} catch (ClassNotFoundException e2) {
 			// logger.error(e2);
@@ -1118,27 +1035,19 @@ public class ServiceImpl implements Service {
 		try {
 			URIBuilder builder = new URIBuilder();
 			builder.setScheme("https").setHost("agco-fuse-trackers.herokuapp.com");// .setPath("/equipment/"+key.toString()+"/")
-			// .setParameter("include",
-			// "equipment.model.series,equipment,equipment.model,equipment.model.series.brand,equipment.model.equipmentType").;
+			
 			URI uri;
-			// try {
-			// uri = builder.build();
-			// builder.build();
+			
 			uri = URI.create("https://agco-fuse-trackers.herokuapp.com/equipment/" + key.toString()
 					+ "/?include=model,model.series,model.series.brand,model.equipmentType,model.serviceSchedule,owner,owner.visibleToDealers.address_country.region,owner.visibleToDealers.address_state_province,owner.visibleToDealers.provider_code");
 			response = client.execute(new HttpGet(uri));
-			// } catch (URISyntaxException e2) {
-			// logger.error(e2);
-			// }
-
+			
 			BufferedReader bf = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 			StringBuffer sb = new StringBuffer();
 			if (response.getStatusLine().getStatusCode() != 200) {
 				throw new RuntimeException("Failed  http Error Code: " + response.getStatusLine().getStatusCode());
 			}
-			// Object one =JSONValue.parse(response.getEntity().toString());
-			// try {
-			// JSONValue.parseWithException(bf);
+			
 			String output;
 			while ((output = bf.readLine()) != null) {
 				// System.out.println(output);
@@ -1149,10 +1058,6 @@ public class ServiceImpl implements Service {
 
 			try {
 				jsonO = new JSONParser().parse(sb.toString());
-				// LinkedHashMap<Object,Object> thisi= new LinkedHashMap<Object,Object>()jsonO);
-				// System.out.println(jsonO);
-				// (HashMap<?, ?>) jsonO)getClass().getClass().getde
-				// Object myObjects = mapper.readValue(output, String.class);
 
 				for (Entry<?, ?> entry : ((HashMap<?, ?>) jsonO).entrySet()) {
 					try {
@@ -1202,7 +1107,7 @@ public class ServiceImpl implements Service {
 							// linked.put(entry3.getKey().toString().trim(), entry3.getValue());
 							JSONArray array = (JSONArray) entry3.getValue();
 							try {
-								cl2 = Class.forName(packName + entry3.getKey().toString().substring(0, 1).toUpperCase()
+								cl2 = Class.forName(PACKNAME + entry3.getKey().toString().substring(0, 1).toUpperCase()
 										+ entry3.getKey().toString().substring(1));
 								thisi3 = cl2.newInstance();
 							} catch (ClassNotFoundException e1) {
@@ -1240,21 +1145,6 @@ public class ServiceImpl implements Service {
 										logger.error(e);
 									}
 
-//									try {
-//										mI3 = cl2.getDeclaredMethod("dontAddData");
-//										isItTrue = (boolean) mI3.invoke(thisi3);
-//										if (isItTrue) {
-//											return null;
-//										}
-//									} catch (NoSuchMethodException e) {
-//										// vollist.add(vol4);
-//									} catch (SecurityException e) {
-//										logger.error(e);
-//									} catch (InvocationTargetException e) {
-//										logger.error(e);
-//									} catch (IllegalAccessException e) {
-//										logger.error(e);
-//									}
 
 								}
 								linked.put(thisi3.getClass().getSimpleName(), thisi3);
@@ -1262,7 +1152,7 @@ public class ServiceImpl implements Service {
 						}
 						for (Entry<?, ?> entry5 : linked.entrySet()) {
 							try {
-								cl2 = Class.forName(packName + entry5.getValue().getClass().getSimpleName());
+								cl2 = Class.forName(PACKNAME + entry5.getValue().getClass().getSimpleName());
 								thisi3 = entry5.getValue();
 							} catch (ClassNotFoundException e1) {
 								// logger.error(e1);
@@ -1307,23 +1197,6 @@ public class ServiceImpl implements Service {
 		} catch (IOException e1) {
 			logger.error(e1);
 		}
-		// try {
-		//
-		// linked.get("Provider_codes").equals(null);
-		// linked.get("Countries").equals(null);
-		// linked.get("Dealers").equals(null);
-		// linked.get("Models").equals(null);
-		// linked.get("Owners").equals(null);
-		// linked.get("Series").equals(null);
-		// linked.get("Brands").equals(null);
-		// linked.get("ServiceSchedules").equals(null);
-		// linked.get("EquipmentTypes").equals(null);
-		// linked.get("Equipment").equals(null);
-		// return linked.get("Equipment");
-		// }catch(NullPointerException e) {
-		// logger.info("No Such Equipment Exist (equipmentCollection)");
-		// }
-		// linked.clear();
 		v++;
 		return linked.get("Equipment");
 
@@ -1364,9 +1237,7 @@ public class ServiceImpl implements Service {
 	}
 
 	public void wirteToFile2(List tempObject, boolean split, String type) {
-		// HashMap<? extends Object, ? extends Object> entryMap =(HashMap<? extends
-		// Object, ? extends Object>) ((ApiSuperClass)
-		// tempObject).getAdditionalProperties();
+	
 		boolean split1OR2 = true;
 		int numberOfFiles = 0;
 		List<Object> tempObjectScope = tempObject;
@@ -1379,15 +1250,6 @@ public class ServiceImpl implements Service {
 			this.split = true;
 		}
 		tempObjectScope.clear();
-
-		// if(!(tempObjectScope.size()==0)) {
-		// if(split1OR2) {
-		// createFile(tempObjectScope,"D:\\TempJSONObject/tempObject"+numberOfFiles+".ser");
-		// }else {
-		// createFile(tempObjectScope,"C:\\Users/josephjo/TempObject/tempObject"+numberOfFiles+".ser");
-		//
-		// }
-		// }
 
 	}
 
@@ -1405,8 +1267,7 @@ public class ServiceImpl implements Service {
 	public void createFile(List list, String fileString) {
 
 		String tempString = list.toString();
-		// File file = new
-		// File("C:\\Users\\josephjo\\TempJSONObject\\tempJsonobject"+numberOfFiles+".txt");
+		
 		File file = new File(fileString);
 		File fileOut = new File(fileString);
 		try {
@@ -1415,14 +1276,12 @@ public class ServiceImpl implements Service {
 			out.writeObject(list);
 			out.flush();
 			out.close();
-			// byte[] strBytes = tempString.getBytes();
-
-			// fos.write(strBytes);
+			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -1433,7 +1292,6 @@ public class ServiceImpl implements Service {
 		logger.debug("Collecting Files");
 		String[] it = {"D:\\TempObjectJumpS/Equipment/EquipmentR","D:\\TempObjectJumpS/Trackers"};
 		boolean closeSession = false;
-		//File fileDir = new File("D:\\TempObjectJumpS/Equipment/EquipmentR");
 		for(int y=0;y<it.length;y++) {
 			File fileDir = new File(it[y]);
 		File[] file = fileDir.listFiles();
@@ -1446,20 +1304,7 @@ public class ServiceImpl implements Service {
 				for (int xx = 0; xx < list.size(); xx++) {
 					System.out.println(list.get(xx));
 
-					// if (file[x].getPath().contains("L")) {
-					// Object thisi = null;
-					// try {
-					// thisi = LatestTelemetries.class.newInstance();
-					// } catch (InstantiationException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// } catch (IllegalAccessException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
-					// subDataCollection((Map<String, Object>) list.get(xx), thisi,
-					// LatestTelemetries.class);
-					// }else {
+				
 					
 					if(file[x].getPath().contains("Equip")) {
 						for(Entry<?,?> entry : ((LinkedHashMap<?, ?>) list.get(xx)).entrySet()){
@@ -1472,9 +1317,7 @@ public class ServiceImpl implements Service {
 							documentList2.put(v, object);
 							 //v++;
 							 if(v>250) {
-								 //Joshua
-								 
-								 //sessionSendToDB.setObject(tempObject.getClass().getSimpleName(),documentList1);
+								
 								 logger.debug("Storing updated");
 								 sessionSendToDB.setObject(documentList2);
 								 statusTracker =statusTracker+documentList2.size();
@@ -1482,7 +1325,7 @@ public class ServiceImpl implements Service {
 								
 								 v=0;
 								 closeSession =true;
-								 //index=0;
+								
 								 }
 							}
 					}else if(file[x].getPath().contains("Track")) {
@@ -1492,8 +1335,7 @@ public class ServiceImpl implements Service {
 								documentList2.put(v, object);
 								 isIt=true;
 								 if(v>250) {
-									 //Joshua
-									 //sessionSendToDB.setObject(tempObject.getClass().getSimpleName(),documentList1);
+									
 									 logger.debug("Storing updated");
 									 sessionSendToDB.setObject(documentList2);
 									 statusTracker =statusTracker+documentList2.size();
@@ -1552,9 +1394,9 @@ return statusTracker;
 		// Object key
 		CredentialsProvider provider = new BasicCredentialsProvider();
 		// UsernamePasswordCredentials credintaials =new
-		// UsernamePasswordCredentials("","");
+		// UsernamePasswordCredentials("ADMTHREE.AC2OA@gmail.com","password1234");
 		UsernamePasswordCredentials credintaials = new UsernamePasswordCredentials(
-				"almsupportdesk@fuseserviceaccount.com", "ALM2017!");
+				USERNAME, System.getProperty(USERNAME));
 		provider.setCredentials(AuthScope.ANY, credintaials);
 		HttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
 		Object thisi3 = null;
@@ -1583,7 +1425,7 @@ return statusTracker;
 
 		Class<?> cl2 = null;
 		try {
-			cl2 = Class.forName(packName + Trackers.class.getSimpleName());
+			cl2 = Class.forName(PACKNAME + Trackers.class.getSimpleName());
 			thisi3 = cl2.newInstance();
 		} catch (ClassNotFoundException e2) {
 			// logger.error(e2);
@@ -1598,29 +1440,22 @@ return statusTracker;
 		try {
 			URIBuilder builder = new URIBuilder();
 			builder.setScheme("https").setHost("agco-fuse-trackers.herokuapp.com");// .setPath("/equipment/"+key.toString()+"/")
-			// .setParameter("include",
-			// "equipment.model.series,equipment,equipment.model,equipment.model.series.brand,equipment.model.equipmentType").;
+		
 			URI uri;
-			// try {
-			// uri = builder.build();
-			// builder.build();
+			
 			uri = URI.create("https://agco-fuse-trackers.herokuapp.com/trackers/" + key.toString()+"/"
 					+"?include=comServiceSubscription,comServiceLevel,configuration,configuration.canVariables,configuration.canVariables.standardUnit,equipment,equipment.model,equipment.model.series,equipment.model.series.brand,equipment.model.equipmentType,equipment.model.serviceSchedule,equipment.owner,equipment.owner.visibleToDealers.address_country.region,equipment.owner.visibleToDealers.provider_code");
 			
 		
 			response = client.execute(new HttpGet(uri));
-			// } catch (URISyntaxException e2) {
-			// logger.error(e2);
-			// }
+			
 
 			BufferedReader bf = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 			StringBuffer sb = new StringBuffer();
 			if (response.getStatusLine().getStatusCode() != 200) {
 				throw new RuntimeException("Failed  http Error Code: " + response.getStatusLine().getStatusCode());
 			}
-			// Object one =JSONValue.parse(response.getEntity().toString());
-			// try {
-			// JSONValue.parseWithException(bf);
+			
 			String output;
 			while ((output = bf.readLine()) != null) {
 				// System.out.println(output);
@@ -1631,10 +1466,7 @@ return statusTracker;
 
 			try {
 				jsonO = new JSONParser().parse(sb.toString());
-				// LinkedHashMap<Object,Object> thisi= new LinkedHashMap<Object,Object>()jsonO);
-				// System.out.println(jsonO);
-				// (HashMap<?, ?>) jsonO)getClass().getClass().getde
-				// Object myObjects = mapper.readValue(output, String.class);
+			
 
 				for (Entry<?, ?> entry : ((HashMap<?, ?>) jsonO).entrySet()) {
 					try {
@@ -1681,10 +1513,10 @@ return statusTracker;
 					} catch (ClassCastException cee) {
 						for (Entry<?, ?> entry3 : ((HashMap<?, ?>) entry.getValue()).entrySet()) {
 							// System.out.println(entry3.getKey()+" = "+entry3.getValue());
-							// linked.put(entry3.getKey().toString().trim(), entry3.getValue());
+						
 							JSONArray array = (JSONArray) entry3.getValue();
 							try {
-								cl2 = Class.forName(packName + entry3.getKey().toString().substring(0, 1).toUpperCase()
+								cl2 = Class.forName(PACKNAME + entry3.getKey().toString().substring(0, 1).toUpperCase()
 										+ entry3.getKey().toString().substring(1));
 								thisi3 = cl2.newInstance();
 							} catch (ClassNotFoundException e1) {
@@ -1722,21 +1554,6 @@ return statusTracker;
 										logger.error(e);
 									}
 
-//									try {
-//										mI3 = cl2.getDeclaredMethod("dontAddData");
-//										isItTrue = (boolean) mI3.invoke(thisi3);
-//										if (isItTrue) {
-//											return null;
-//										}
-//									} catch (NoSuchMethodException e) {
-//										// vollist.add(vol4);
-//									} catch (SecurityException e) {
-//										logger.error(e);
-//									} catch (InvocationTargetException e) {
-//										logger.error(e);
-//									} catch (IllegalAccessException e) {
-//										logger.error(e);
-//									}
 
 								}
 								linked.put(thisi3.getClass().getSimpleName(), thisi3);
@@ -1744,7 +1561,7 @@ return statusTracker;
 						}
 						for (Entry<?, ?> entry5 : linked.entrySet()) {
 							try {
-								cl2 = Class.forName(packName + entry5.getValue().getClass().getSimpleName());
+								cl2 = Class.forName(PACKNAME + entry5.getValue().getClass().getSimpleName());
 								thisi3 = entry5.getValue();
 							} catch (ClassNotFoundException e1) {
 								// logger.error(e1);
@@ -1789,17 +1606,6 @@ return statusTracker;
 		} catch (IOException e1) {
 			logger.error(e1);
 		}
-		// try {
-		//
-		// linked.get("Provider_codes").equals(null);
-		// linked.get("Countries").equals(null);
-		// linked.get("Dealers").equals(null);
-		// linked.get("Models").equals(null);
-		// linked.get("Owners").equals(null);
-		// linked.get("Series").equals(null);
-		// linked.get("Brands").equals(null);
-		// linked.get("ServiceSchedules").equals(null);
-		// linked.get("EquipmentTypes").equals(null);
 		try {
 		 
 		 v++;
