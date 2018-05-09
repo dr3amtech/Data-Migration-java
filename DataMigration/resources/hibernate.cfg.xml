@@ -8,9 +8,9 @@
 		<!-- <property name="hibernate.connection.password"></property>
 		<property name="hibernate.connection.url"></property>
 		  <property name="hibernate.connection.username"></property> -->
-	 	<property name="hibernate.connection.password"></property>
-		<property name="hibernate.connection.url"></property>
-		<property name="hibernate.connection.username"></property>  
+	 	<property name="hibernate.connection.password">xxxxx</property>
+		<property name="hibernate.connection.url">xxxxxx</property>
+		<property name="hibernate.connection.username">xxxxxx</property>  
 		<property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
 		<!--<property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property> -->
 		<property name="hibernate.hbm2ddl.auto">update</property>
