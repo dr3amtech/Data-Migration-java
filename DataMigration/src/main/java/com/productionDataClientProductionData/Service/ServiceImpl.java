@@ -73,6 +73,7 @@ public class ServiceImpl implements Service {
 	private static SessionDAO sessionSendToDB = new SessionDaoImpl();
 	private final String PACKNAME = "com.productionDataClientProductionData.pojo.";
 	private final String USERNAME = "almsupportdesk@fuseserviceaccount.com";
+	private final String DIRECT_PATH ="<File location containing properties ex. Credentials>";
 	private static String[] entities= new String[]{"Equipment","Trackers"};
 	private final String URIP = "URI";
 	private static Map<Integer, Object> documentList2 = new TreeMap<Integer, Object>();
@@ -125,7 +126,7 @@ public class ServiceImpl implements Service {
 	@Override
 	public HashMap<String, String> getApiCalls() {
 	try {
-		FileInputStream fis =  new FileInputStream("<File location containing properties ex. Credentials>");
+		FileInputStream fis =  new FileInputStream(DIRECT_PATH);
 		
 		
 		Properties prop = new Properties(System.getProperties());
