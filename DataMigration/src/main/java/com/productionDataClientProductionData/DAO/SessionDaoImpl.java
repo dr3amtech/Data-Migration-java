@@ -251,83 +251,8 @@ public class SessionDaoImpl implements SessionDAO {
 			 
 		 }
 		}
-//		for (Entry<Integer, Object> entry1 : documentList2.entrySet()) {
-//			if(entry1.getValue() instanceof LatestTelemetries) {
-//		//DateFormat dateF2 = new SimpleDateFormat("EEE dd MM HH:mm:ss 'EDT' (yyyy)");
-//		//DateFormat dateF = new SimpleDateFormat("EEE-dd-yyyy");
-////		String dateString = new Date();
-////		String dateString2 =  ((LatestTelemetries) entry1.getValue()).getTimeOfOccurrence().toString();
-//		
-//		Date date =new Date();
-//		Date date2 = ((LatestTelemetries) entry1.getValue()).getTimeOfOccurrence();
-////			dateString = dateString.replaceAll("\\s","-").trim();
-////			date = dateF.parse(dateF.format(dateString));
-////			date2= dateF.parse(dateF.format(dateString2));
-//	
-//	
-//			if(date.compareTo(date2)>0){
-//				//if todays date is greater then
-//				documentList3.put(entry1.getKey(),entry1.getValue());
-//			}
-//	
-//			}else if(!(entry1.getValue() instanceof LatestTelemetries)){
-//				documentList3.put(entry1.getKey(), entry1.getValue());
-//			}
-//		}
+
 	
 		return documentList3;
 	}
 
-//	@Override
-//	public Map<Integer, Object> deleteFromUpdate() {
-//		getConnection();
-//		sessionFactory = Connection.getSessionFactory();
-//		session = sessionFactory.openSession();
-//		try {
-//			String hql = "select LATESTTELEM.TIMEOFOCCURRENCE from LatestTeleM where Mongo_ID in ('"+id+"')";
-//			System.out.println(hql);
-//			Query query = session.createNativeQuery(hql);
-//			//Query query = session.createNativeQuery(hql, entry1.getValue().getClass());
-//			List<Date> latestTelemetries = (List<Date>) query.getResultList();
-//			//tempObject = query.getResultList();
-//			
-//			latestTelemetries.equals(null);
-//			boolean isItTrue = true;
-//			//for(int x = 0;x<latestTelemetries.size();x++) {
-//		    
-//		
-//			
-////			if(latestTelemetries.get(x).getTimeOfOccurrence().compareTo(date)<0||latestTelemetries.get(x).getTimeOfOccurrence().compareTo(date)==0){
-////				isItTrue=false;
-////			}
-//				try {
-//				if(latestTelemetries.get(latestTelemetries.size()-1).compareTo(date)>0||latestTelemetries.get(latestTelemetries.size()-1).compareTo(date)==0){
-//					isItTrue=false;
-//				}
-//				}catch(IndexOutOfBoundsException e) {
-//					 isItTrue = true;
-//				}
-//			
-//			//}
-//			if(isItTrue) {
-//				documentList3.put(entry1.getKey(), entry1.getValue());
-//				documentList3.put((entry1.getKey()-1), documentList2.get(entry1.getKey()-1));
-//			}
-//		} catch (TransactionException e) {
-//			e.printStackTrace();
-//		} catch (NullPointerException es) {
-//			documentList3.put(entry1.getKey(), entry1.getValue());
-//		} catch (TransactionalException ex) {
-//			ex.printStackTrace();
-//			
-//		} catch (HibernateException hb) {
-//			hb.printStackTrace();
-//			System.out.println("");
-//			// if (tx !=null) {
-//			// tx.rollback();
-//			// }
-//		}
-//		
-//		
-//	}
-}
