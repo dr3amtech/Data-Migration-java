@@ -54,11 +54,6 @@ public class SessionDaoImpl implements SessionDAO {
 
 				session.getTransaction().begin();
 
-				// tx = session.getTransaction();
-
-				// session.persist(ObjectList.get(x));
-				// session.save(brandsList.get(x));
-
 				try {
 					ObjectList.get(x).equals(null);
 					// System.out.println(ObjectList.get(x));
@@ -67,17 +62,11 @@ public class SessionDaoImpl implements SessionDAO {
 					continue;
 				}
 
-				// session.update(ObjectList.get(x));
-				// session.update(brandsList.get(x));
-				// logger.info(session);
-				// }else {
-				// session.save(brandsList.get(x));
-				// session.update(brandsList.get(x));
-				// }
+				
 				c = x;
-				// tx.commit();
+				
 
-				// //session.save(brandsList.get(0));
+				
 			} catch (TransactionException e) {
 				e.printStackTrace();
 			} catch (NullPointerException es) {
